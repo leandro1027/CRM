@@ -5,9 +5,10 @@ import { ContatosModule } from './contatos/contatos.module';
 import { DisparosModule } from './disparos/disparos.module';
 import { AtendimentosModule } from './atendimentos/atendimentos.module';
 import { LembretesModule } from './lembretes/lembretes.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [ContatosModule, DisparosModule, AtendimentosModule, LembretesModule],
+  imports: [ContatosModule, DisparosModule, AtendimentosModule, LembretesModule, PrismaModule],
   controllers: [AppController],
   providers: [AppService],
 })

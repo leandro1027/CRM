@@ -1,34 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ContatosService } from './contatos.service';
-import { CreateContatoDto } from './dto/create-contato.dto';
-import { UpdateContatoDto } from './dto/update-contato.dto';
+import { ImportarTxtResponseDto } from './dto/importar-txt-response.dto';
 
 @Controller('contatos')
 export class ContatosController {
   constructor(private readonly contatosService: ContatosService) {}
 
-  @Post()
-  create(@Body() createContatoDto: CreateContatoDto) {
-    return this.contatosService.create(createContatoDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.contatosService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.contatosService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContatoDto: UpdateContatoDto) {
-    return this.contatosService.update(+id, updateContatoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.contatosService.remove(+id);
+  /**
+   * Importa contatos a partir de um arquivo TXT
+   * Cada 2 linhas:
+   * Linha 1: Nome
+   * Linha 2: Telefone
+   */
+  @Post('importar-txt')
+  @UseInterceptors(FileInterceptor('file'))
+  importarTxt(
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<ImportarTxtResponseDto> {
+    return this.contatosService.importarTxt(file);
   }
 }

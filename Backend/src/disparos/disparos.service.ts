@@ -1,26 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateDisparoDto } from './dto/create-disparo.dto';
-import { UpdateDisparoDto } from './dto/update-disparo.dto';
 
 @Injectable()
 export class DisparosService {
-  create(createDisparoDto: CreateDisparoDto) {
-    return 'This action adds a new disparo';
+  constructor(private prisma: PrismaService) {}
+
+  async create(dto: CreateDisparoDto) {
+    return this.prisma.disparo.create({
+      data: {
+        contatoId: dto.contatoId,
+        mensagem: dto.mensagem,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all disparos`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} disparo`;
-  }
-
-  update(id: number, updateDisparoDto: UpdateDisparoDto) {
-    return `This action updates a #${id} disparo`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} disparo`;
+  async findAll() {
+    return this.prisma.disparo.findMany({
+      include: { contato: true },
+      orderBy: { dataEnvio: 'desc' },
+    });
   }
 }
