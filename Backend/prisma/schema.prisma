@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/*
+ ENUMS
+*/
+enum OrigemContato {
+  TXT
+  RECEITA
+}
+
+enum StatusContato {
+  NOVO
+  ENVIADO
+  RESPONDEU
+  CLIENTE
+}
+
+enum PrioridadeAtendimento {
+  BAIXA
+  MEDIA
+  ALTA
+}
+
+enum SituacaoAtendimento {
+  RESOLVIDO
+  EM_ANDAMENTO
+  AGUARDANDO_CLIENTE
+}
+
+/*
+ CONTATOS (base de tudo)
+*/
+model Contato {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  telefone  String   @unique
+  cnpj      String?
+  cnae      String?
+  origem    OrigemContato
+  status    StatusContato @default(NOVO)
+
+  grupoId   Int?
+  grupo     GrupoCliente? @relation(fields: [grupoId], references: [id])
+
+  disparos      Disparo[]
+  atendimentos Atendimento[]
+  lembretes    Lembrete[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/*
+ GRUPOS DE CLIENTES
+ Ex: Comércio, Transporte, MEI
+*/
+model GrupoCliente {
+  id             Int      @id @default(autoincrement())
+  nome           String
+  mensagemPadrao String
+  limiteDiario   Int
+
+  contatos Contato[]
+
+  createdAt DateTime @default(now())
+}
+
+/*
+ REGISTRO DE DISPAROS
+ Substitui enviados.csv + progresso.txt
+*/
+model Disparo {
+  id        Int      @id @default(autoincrement())
+  contatoId Int
+  contato   Contato  @relation(fields: [contatoId], references: [id])
+
+  mensagem  String
+  dataEnvio DateTime @default(now())
+}
+
+/*
+ CONTROLE INTERNO DE SUPORTE
+*/
+model Atendimento {
+  id          Int      @id @default(autoincrement())
+  contatoId   Int
+  contato     Contato  @relation(fields: [contatoId], references: [id])
+
+  descricao   String
+  combinado   String
+  responsavel String
+  prioridade  PrioridadeAtendimento
+  situacao    SituacaoAtendimento
+
+  createdAt DateTime @default(now())
+}
+
+/*
+ LEMBRETES E PENDÊNCIAS
+*/
+model Lembrete {
+  id        Int      @id @default(autoincrement())
+  contatoId Int
+  contato   Contato  @relation(fields: [contatoId], references: [id])
+
+  descricao String
+  data      DateTime
+  concluido Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+/*
+ USUÁRIOS INTERNOS DO SISTEMA
+*/
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  email     String   @unique
+  senha     String
+  ativo     Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+}
