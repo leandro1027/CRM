@@ -28,14 +28,19 @@ export class ContatosController {
     return this.contatosService.criarManual(dto);
   }
 
-  @Post('cnpj/:cnpj')
-  criarViaCnpj(@Param('cnpj') cnpj: string) {
-    return this.contatosService.criarViaCnpj(cnpj);
+  @Post('prospectar')
+  prospectar(@Body() filtros: { cnae?: string; uf?: string; cidade?: string; bairro?: string }) {
+    return this.contatosService.prospectar(filtros);
   }
 
   @Get()
   listar() {
     return this.contatosService.listar();
+  }
+
+  @Get('ultimos')
+  listarUltimos() {
+    return this.contatosService.listarUltimos();
   }
 
   @Get('telefone/:telefone')
