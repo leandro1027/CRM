@@ -5,22 +5,27 @@ import Header from "../src/components/header";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-br">
-      {/* 1. bg-[#f8fafc] garante que o fundo seja o cinza claríssimo do site */}
-      {/* 2. min-h-screen evita que o fundo "acabe" se a página for pequena */}
-      <body className="flex bg-[#f8fafc] text-[#0a2533] min-h-screen antialiased">
+      <body className="flex bg-[#f8fafc] text-[#0a2533] min-h-screen antialiased overflow-hidden">
         
-        {/* Sidebar fixa na lateral */}
+        {/* A Sidebar agora controla sua própria largura. 
+            O Flexbox (className="flex" no body) faz o resto do trabalho.
+        */}
         <Sidebar />
 
-        {/* Container principal */}
-        <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        {/* Container principal:
+            - flex-1: Ocupa todo o espaço restante ao lado da sidebar.
+            - transition-all: Faz com que o redimensionamento do conteúdo seja suave junto com a sidebar.
+        */}
+        <div className="flex-1 flex flex-col h-screen min-w-0 transition-all duration-500 ease-in-out">
           
           <Header />
 
-          {/* 3. Área de conteúdo com scroll próprio para não mover o Header/Sidebar */}
-          {/* 4. Retiramos o excesso de padding que causava o "box" estranho */}
+          {/* Área de conteúdo:
+              - overflow-y-auto: Scroll apenas aqui dentro.
+              - p-4 md:p-8: Espaçamento que se adapta ao monitor.
+          */}
           <main className="flex-1 overflow-y-auto bg-[#f8fafc] p-4 md:p-8">
-            <div className="max-w-[1600px] mx-auto">
+            <div className="max-w-[1600px] mx-auto w-full">
               {children}
             </div>
           </main>
