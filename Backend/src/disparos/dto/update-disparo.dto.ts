@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDisparoDto } from './create-disparo.dto';
+import { IsEnum } from 'class-validator';
+import { StatusContato } from '@prisma/client';
 
-export class UpdateDisparoDto extends PartialType(CreateDisparoDto) {}
+export class UpdateStatusContatoDto {
+  @IsEnum(StatusContato)
+  status: StatusContato;
+}

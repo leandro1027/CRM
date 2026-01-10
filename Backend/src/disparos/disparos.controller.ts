@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { DisparosService } from './disparos.service';
 import { CreateDisparoDto } from './dto/create-disparo.dto';
 
@@ -7,12 +14,17 @@ export class DisparosController {
   constructor(private readonly service: DisparosService) {}
 
   @Post()
-  create(@Body() dto: CreateDisparoDto) {
-    return this.service.create(dto);
+  criar(@Body() dto: CreateDisparoDto) {
+    return this.service.criar(dto);
   }
 
   @Get()
-  findAll() {
-    return this.service.findAll();
+  listar() {
+    return this.service.listar();
+  }
+
+  @Get('contato/:id')
+  listarPorContato(@Param('id', ParseIntPipe) id: number) {
+    return this.service.listarPorContato(id);
   }
 }
